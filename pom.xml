@@ -31,40 +31,67 @@
   
   <!-- Build: Configuring plugins and build settings -->
 <build>
-<plugins>
-<!-- Example: Maven Compiler Plugin to compile Java code -->
-<plugin>
-<groupId>org.apache.maven.plugins</groupId>
-<artifactId>maven-compiler-plugin</artifactId>
-<version>3.8.1</version>
-<configuration>
-<source>11</source>
-<target>11</target>
-</configuration>
-</plugin>
-<!-- Example: Maven Surefire Plugin to run tests -->
-<plugin>
-<groupId>org.apache.maven.plugins</groupId>
-<artifactId>maven-surefire-plugin</artifactId>
-<version>2.22.2</version>
-</plugin>
-<plugin>
+    <plugins>
+
+        <!-- Compiler -->
+        <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            
-            <artifactId>maven-jar-plugin</artifactId>
-            <version>3.0.1</version>      
-           <configuration>
-                <archive>
-                    <manifestEntries>
-                        <Main-Class>com.example.App</Main-Class>
-                    </manifestEntries>
-                </archive>
-            </configuration> 
-            
-            
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.8.1</version>
+            <configuration>
+                <release>11</release>
+            </configuration>
         </plugin>
-        
-        
-</plugins>
-</build>  
+
+        <!-- Test -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.22.2</version>
+        </plugin>
+
+        <!-- 🔥 SHADE PLUGIN (CRITICAL) -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.3.0</version>
+
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+
+                    <configuration>
+
+                        <!-- Fix signature issue -->
+                        <filters>
+                            <filter>
+                                <artifact>*:*</artifact>
+                                <excludes>
+                                    <exclude>META-INF/*.SF</exclude>
+                                    <exclude>META-INF/*.DSA</exclude>
+                                    <exclude>META-INF/*.RSA</exclude>
+                                </excludes>
+                            </filter>
+                        </filters>
+
+                        <!-- Main class -->
+                        <transformers>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <mainClass>com.example.App</mainClass>
+                            </transformer>
+                        </transformers>
+
+                        <!-- Final JAR name -->
+                        <finalName>app</finalName>
+
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+    </plugins>
+</build>
 </project>
